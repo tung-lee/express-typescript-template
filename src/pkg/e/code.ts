@@ -1,0 +1,13 @@
+export enum ErrorCode {
+  NOT_FOUND = 404,
+
+  // Authentication & Authorization
+
+  // User 30000-30999
+  CREATE_USER_FAILED = 30000,
+  FIND_USER_FAILED = 30001,
+  USER_NOT_FOUND = 30002,
+  UPDATE_USER_FAILED = 30003,
+  DELETE_USER_FAILED = 30004,
+  FIND_USER_BY_EMAIL_FAILED = 30005,
+}

@@ -1,25 +1,31 @@
 import { CreateUserRequest } from "@/dto";
+import { CustomExpress } from "@/pkg/app/response";
+import { ErrorCode } from "@/pkg/e/code";
 import { userService } from "@/services"
 import { User } from "@/types";
 import { RequestHandler } from "express";
 
 const create: RequestHandler = async (req, res, next) => {
+    const appExpress = new CustomExpress(req, res, next);
+
     try {
-        let data = req.body as CreateUserRequest;
+        let data = appExpress.req.body as CreateUserRequest;
         let user: User = {
             ...data,
         }
         const result = await userService.create(user);
-        res.status(201).json(result);
+        appExpress.response201(result)
     } catch (error) {
         next(error);
     }
 };
 
 const findMany: RequestHandler = async (req, res, next) => {
+    const appExpress = new CustomExpress(req, res, next);
+
     try {
         const users = await userService.findMany();
-        res.status(200).json(users);
+        appExpress.response200(users)
     } catch (error) {
         next(error);
     }
@@ -27,27 +33,41 @@ const findMany: RequestHandler = async (req, res, next) => {
 
 
 const findById: RequestHandler = async (req, res, next) => {
+    const appExpress = new CustomExpress(req, res, next);
+
     try {
         const user = await userService.findById(req.params.id);
-        res.status(200).json(user);
+        if (!user) {
+            appExpress.response404(ErrorCode.USER_NOT_FOUND, {})
+        } else {
+            appExpress.response200(user)
+        }
     } catch (error) {
         next(error);
     }
 };
 
 const update: RequestHandler = async (req, res, next) => {
+    const appExpress = new CustomExpress(req, res, next);
+
     try {
         const user = await userService.update(req.params.id, req.body);
-        res.status(200).json(user);
+        if (!user) {
+            appExpress.response404(ErrorCode.USER_NOT_FOUND, {})
+        } else {
+            appExpress.response200(user)
+        }
     } catch (error) {
         next(error);
     }
 };
 
 const deleteById: RequestHandler = async (req, res, next) => {
+    const appExpress = new CustomExpress(req, res, next);
+
     try {
         await userService.deleteById(req.params.id);
-        res.status(204).send();
+        appExpress.response204({})
     } catch (error) {
         next(error);
     }

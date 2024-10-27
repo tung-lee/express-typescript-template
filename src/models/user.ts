@@ -6,14 +6,10 @@ const COLLECTION_NAME = "Users";
 
 const schema = new Schema<User>(
     {
-        userId: {
-            type: String,
-            required: true,
-            unique: true,
-        },
         email: {
             type: String,
             required: true,
+            unique: true,
         },
         username: {
             type: String,
@@ -22,7 +18,8 @@ const schema = new Schema<User>(
         role: {
             type: String,
             required: true,
-            enum: [Role.NORMAL, Role.ADMIN, Role.INTERNAL],
+            enum: [Role.NORMAL, Role.ADMIN],
+            default: Role.NORMAL,
         },
     },
     {

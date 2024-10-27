@@ -2,14 +2,13 @@ import compression from "compression";
 import express, { Request, Response, Express, NextFunction } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
-import { StatusCodes } from "http-status-codes";
 import cors from "cors";
 
-import router from "./routes";
-import { ErrorResponse, NotFoundError } from "./core/error.response";
-
-// Load environment variables before importing other modules that use them
-require("dotenv").config();
+import router from "@/routes";
+import { AppError } from "@/pkg/e/app_error";
+import { ErrorCode } from "@/pkg/e/code";
+import { ErrorMessages } from "@/pkg/e/msg";
+import { CustomExpress } from "@/pkg/app/response";
 
 const app: Express = express();
 
@@ -31,20 +30,14 @@ app.use("", router);
 
 // 404 Not Found
 app.use((_req: Request, _res: Response, next: NextFunction) => {
-  const notFoundError = new NotFoundError();
-  next(notFoundError);
+    next(AppError.newError404(ErrorCode.NOT_FOUND, ErrorMessages[ErrorCode.NOT_FOUND]));
 });
 
 app.use(
-  (err: ErrorResponse, _req: Request, res: Response, _next: NextFunction) => {
-    const statusCode = err.status || StatusCodes.INTERNAL_SERVER_ERROR;
-    return res.status(statusCode).json({
-      status: "error",
-      code: statusCode,
-      message: err.message || "Internal Server Error",
-      // stack: err.stack, // development only
-    });
-  }
+    (err: AppError, _req: Request, res: Response, _next: NextFunction) => {
+        const appExpress = new CustomExpress(_req, res, _next);
+        appExpress.responseAppError(err);
+    }
 );
 
 export default app;
