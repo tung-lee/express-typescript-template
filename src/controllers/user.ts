@@ -1,6 +1,8 @@
 import { CreateUserRequest } from "@/dto";
 import { CustomExpress } from "@/pkg/app/response";
 import { ErrorCode } from "@/pkg/e/code";
+import { prepareSelectedFieldValue } from "@/pkg/utils/utils";
+import { MongooseFindManyOptions } from "@/repository/type";
 import { userService } from "@/services"
 import { User } from "@/types";
 import { RequestHandler } from "express";
@@ -24,7 +26,13 @@ const findMany: RequestHandler = async (req, res, next) => {
     const appExpress = new CustomExpress(req, res, next);
 
     try {
-        const users = await userService.findMany();
+        const selectFields = prepareSelectedFieldValue(appExpress.req.query.select as string);
+
+        const options: MongooseFindManyOptions = {
+            selectFields,
+        }
+
+        const users = await userService.findMany(options);
         appExpress.response200(users)
     } catch (error) {
         next(error);

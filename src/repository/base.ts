@@ -1,13 +1,14 @@
 import { Model, ObjectId } from 'mongoose';
+import { MongooseFindManyOptions } from '@/repository/type';
 
 // Base Repository Interface for MongoDB
 interface BaseRepository<T> {
     // CREATE
     create(data: Partial<T>): Promise<T>;
     createMany(listData: Partial<T>[]): Promise<T[]>;
-    
+
     // READ
-    findMany(): Promise<T[]>;
+    findMany(options?: MongooseFindManyOptions): Promise<T[]>;
     findById(id: string | ObjectId): Promise<T | null>;
     // findOne()
     // findOneScopes()
@@ -50,9 +51,27 @@ abstract class BaseRepositoryImpl<T> implements BaseRepository<T> {
         }
     }
 
-    async findMany(): Promise<T[]> {
+    async findMany(options?: MongooseFindManyOptions): Promise<T[]> {
         try {
-            const listData = await this.model.find().exec();
+            let query = this.model.find();
+
+            if (options?.selectFields) {
+                query = query.select(options.selectFields);
+            }
+            if (options?.sort) {
+                query = query.sort(options.sort);
+            }
+            if (options?.offset) {
+                query = query.skip(options.offset);
+            }
+            if (options?.limit) {
+                query = query.limit(options.limit);
+            }
+            if (options?.populateOptions) {
+                query = query.populate(options.populateOptions);
+            }
+
+            const listData = await query.exec();
             return listData;
         } catch (error) {
             console.error('Error finding documents:', error);

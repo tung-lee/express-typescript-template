@@ -1,3 +1,4 @@
+import { MongooseFindManyOptions } from "@/repository/type";
 import { userService } from "@/services/user";
 
 interface BaseService<T, K> {
@@ -6,7 +7,7 @@ interface BaseService<T, K> {
     createMany: (data: T[]) => Promise<T[]>;
 
     // READ
-    findMany: () => Promise<T[]>;
+    findMany: (options?: MongooseFindManyOptions) => Promise<T[]>;
     findById: (id: K) => Promise<T | null>;
 
     // UPDATE
