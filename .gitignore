@@ -134,3 +134,9 @@ package-lock.json
 yarn.lock
 pnpm-lock.yaml
 .DS_Store
+
+.env
+.env.local
+.env.dev
+.env.staging
+.env.prod

@@ -10,6 +10,8 @@ import { ErrorCode } from "@/pkg/e/code";
 import { ErrorMessages } from "@/pkg/e/msg";
 import { CustomExpress } from "@/pkg/app/response";
 
+import "@/config";
+
 const app: Express = express();
 
 // init middlewares

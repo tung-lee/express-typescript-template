@@ -1,7 +1,7 @@
-import app from "./app";
-import config from "./configs";
+import app from "@/app";
+import { config } from "@/config";
 
-const port = config.app.port || 3000;
+const port = config.server.httpPort || 3000;
 
 const server = app.listen(port, () => {
   console.log(`[server]: Server is running with port ${port}`);

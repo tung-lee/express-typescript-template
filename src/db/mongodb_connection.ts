@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
-import config from "../configs";
-
-const connectionString = `${config.db.connectionString}`;
+import { config } from "@/config";
 
 class Database {
   private static instance: Database;
@@ -17,8 +15,8 @@ class Database {
     });
 
     mongoose
-      .connect(connectionString, {
-        dbName: config.db.name,
+      .connect(`${config.nosqlDb.type}://${config.nosqlDb.user}:${config.nosqlDb.password}@${config.nosqlDb.host}:${config.nosqlDb.port}`, {
+        dbName: `${config.nosqlDb.name}`,
       })
       .then(() => {
         console.log("Connected to MongoDB");
